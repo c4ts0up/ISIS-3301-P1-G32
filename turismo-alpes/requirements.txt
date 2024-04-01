@@ -1,6 +1,7 @@
 pandas
 numpy
 joblib
+jupyter
 seaborn
 matplotlib
 scipy

@@ -1,11 +1,11 @@
 # Información del equipo
-| Nombre             | Correo                      | Código    | 
-|--------------------|-----------------------------|-----------|
-| Álvaro Bacca       | a.baccap@uniandes.edu.co    | 202121869 |
-| Daniel Villar      | d.villarg@uniandes.edu.co   |  |
-| Sebastián Guerrero | s.guerrero3@uniandes.edu.co |  |
-| X Y                | xy@uniandes.edu.co          |  |
-| X Y                | xy@uniandes.edu.co          |  |
+| Nombre             | Correo                       | Código    | 
+|--------------------|------------------------------|-----------|
+| Álvaro Bacca       | a.baccap@uniandes.edu.co     | 202121869 |
+| Daniel Villar      | d.villarg@uniandes.edu.co    |  |
+| Sebastián Guerrero | s.guerrero3@uniandes.edu.co  |  |
+| Samuel Chaparro    | sa.chaparro2@uniandes.edu.co |  |
+| Juan Pablo Jossa   | j.jossa@uniandes.edu.co      |  |
 
 ---
 
