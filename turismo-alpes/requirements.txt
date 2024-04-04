@@ -18,3 +18,6 @@ inflect                     # maneja las flexiones gramaticales en inglés
 contractions                # maneja las contracciones en inglés
 scikit-plot                 # manejo de gráficas
 nltk                        # librería Natural Language Toolkit, usada para trabajar con textos
+
+# Librerías en español
+stanza                      # tokenización y lematización
