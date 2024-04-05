@@ -2,7 +2,7 @@
 | Nombre             | Correo                       | Código    | 
 |--------------------|------------------------------|-----------|
 | Álvaro Bacca       | a.baccap@uniandes.edu.co     | 202121869 |
-| Daniel Villar      | d.villarg@uniandes.edu.co    |  |
+| Daniel Villar      | d.villarg@uniandes.edu.co    | 201923374 |
 | Sebastián Guerrero | s.guerrero3@uniandes.edu.co  |  |
 | Samuel Chaparro    | sa.chaparro2@uniandes.edu.co |  |
 | Juan Pablo Jossa   | j.jossa@uniandes.edu.co      |  |
