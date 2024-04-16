@@ -7,8 +7,8 @@ import { useState } from "react";
 function App() {
 
   const [resena, setResena] = useState("")
-
   const[terminado, setTerminado] = useState(false)
+  const[prediccion, setPrediccion] = useState(0);
 
 
   const handleResena = (e) =>{
@@ -16,12 +16,34 @@ function App() {
     setResena(res)
   }
 
-  const handlePredecir = (e)=>{
-    
-    console.log("ACA VA LO DE PREDDECIR")
-    console.log(resena)
-    setTerminado(true)
+  const handlePredecir = async (e)=>{
 
+    const requestBody = {
+      // Example data fields
+      res: resena
+    };
+
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/a', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+          const responseData = await response.json();
+          console.log(responseData);
+          setTerminado(true);
+          setPrediccion(responseData.pred)
+      } else {
+          console.error('Error:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
   }
 
   return (
@@ -47,7 +69,7 @@ function App() {
       </Row>
 
       <Row>
-        {terminado && <h3> La reseña tiene es de la clase: Falta implementar</h3>}
+        {terminado && <h3> La reseña tiene es de la clase: {prediccion}</h3>}
       </Row>
       
     </div>
