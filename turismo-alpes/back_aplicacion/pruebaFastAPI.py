@@ -24,10 +24,11 @@ class Resena(BaseModel):
 async def read_root(resena: Resena):
     #Resena a predecir
     res = resena.res 
+
     #Falta hacer la prediccion
     time.sleep(2)
     #Enviar prediccion
-    return {"pred": random.randint(1, 5)}
+    return {"pred": random.randint(1, 5), "score":  random.randint(40, 60)}
 
 @app.post("/b")
 async def csvPred(file: UploadFile = File(...)):
