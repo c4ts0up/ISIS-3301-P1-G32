@@ -7,10 +7,11 @@ import { useState } from "react";
 function App() {
 
   const [resena, setResena] = useState("");
-  const[terminado, setTerminado] = useState(false);
-  const[prediccion, setPrediccion] = useState(0);
+  const[terminado, setTerminado] = useState(true);
+  const[prediccion, setPrediccion] = useState(null);
+  const[score, setScore] = useState(null);
   const[file, setFile] = useState(null);
-  const[termiandoFile, setTerminadoFile] = useState(false);
+  const[termiandoFile, setTerminadoFile] = useState(true);
 
 
   const handleResena = (e) =>{
@@ -25,6 +26,8 @@ function App() {
   }
 
   const handlePredecir = async (e)=>{
+
+    setTerminado(false);
 
     const requestBody = {
       // Example data fields
@@ -46,6 +49,7 @@ function App() {
           console.log(responseData);
           setTerminado(true);
           setPrediccion(responseData.pred)
+          setScore(responseData.score)
       } else {
           console.error('Error:', response.statusText);
       }
@@ -55,6 +59,8 @@ function App() {
   }
 
   const handlePredecir2 = async (e) => {
+
+    setTerminadoFile(false);
     e.preventDefault();
     const formData = new FormData();
     formData.append('file', file);
@@ -88,58 +94,92 @@ function App() {
 
 
   return (
+    <div style={{backgroundColor:'#F6F5EB'}}>
     <div className="container">
       <Row>
-        <h1>SOY UNA APLICACION DE BI SOLO UNA RESENA</h1>
+        <div className='centrar'>
+          <h1 className='titulo'>Clasificador de reseñas</h1>
+          <h1>Universidad de los Andes</h1>
+          <h2>Inteligencia de negocios</h2>
+          <h3>Proyecto 1</h3>
+          <h3>Grupo 32</h3>
+        </div>
+      </Row>
+
+      <Row>
+        <p className='descripcion'>
+          Esta aplicación fue desarrollada para el proyecto 1 de la clase de Inteligencia de Negocios de La Universidad de los Andes. Se utilizaron métodos de inteligencia artificial de procesamiento de textos para crear un modelo que prediga si una reseña es positiva o negativa, asignándole una clasificación de 1 a 5. Puedes hacer la predicción de una única reseña o ingresar un archivo .csv con un banco grande de reseñas, las cuales serán clasificadas y podrás descargar un archivo con las predicciones.
+        </p>
+
+      </Row>
+
+      <Row>
+        <div className='centrar'>
+          <h1>Procesar una unica reseña</h1>
+        </div>
       </Row>
       <Row>
+        <div className='formpadd'>
         <Form>
           <Form.Group>
-            <Form.Label>
-              Ingrese la reseña
-            </Form.Label>
             <Form.Control  id="Resena"  as="textarea" rows={5} placeholder='Ingrese su reseña aca'  value={resena} onChange={handleResena}/>
           </Form.Group>
         </Form>
+        </div>
       </Row>
 
       <Row>
-        <Button variant="primary" type="submit" onClick={handlePredecir}>
+        <div className='centrarbot'>
+        <Button className='bot' variant="primary" type="submit" onClick={handlePredecir}>
           Predecir
         </Button>
+        </div>
       </Row>
 
       <Row>
-        {terminado && <h3> La reseña tiene es de la clase: {prediccion}</h3>}
+        <div className='centres'>
+          {!terminado && <h3> CARGANDO, ESPERE UNOS SEGUNDOS... </h3>}
+          <h3> La reseña es de la clase: {prediccion} </h3>
+          <h3> Con un score de: {score}</h3>
+        </div>
+      
       </Row>
 
       <Row>
-        <h1>SOY UNA APLICACION DE BI UN ARCHIVO CSV PARA CLASIFICAR RESENAS</h1>
+        <div className='centrar'>
+          <h1>Procesar un CSV con muchas reseñas</h1>
+        </div>
       </Row>
 
       <Row>
+        <div className='formpadd'>
         <Form>
           <Form.Group>
-            <Form.Label>
-              Archivo CSV con resenas a predecir
-            </Form.Label>
             <Form.Control type="file" onChange={handleFileChange}/>
           </Form.Group>
         </Form>
+        </div>
       </Row>
 
       <Row>
-        <Button variant="primary" type="submit" onClick={handlePredecir2}>
+        <div className='centrarbot'>
+        <Button className='bot' variant="primary" type="submit" onClick={handlePredecir2}>
           Predecir
         </Button>
+        </div>
       </Row>
 
       <Row>
-        {termiandoFile && <h3> Descargue el archivo</h3>}
+        <div className='centres'>
+          {!termiandoFile && <h3> CARGANDO, ESPERE UNOS SEGUNDOS... </h3>}
+          <h3> Descargue el archivo </h3>
+        </div>
       </Row>
 
-
-      
+      <Row>
+        <div style={{padding:'50px'}}></div>
+      </Row>
+    </div>
     </div>
   );
 }
