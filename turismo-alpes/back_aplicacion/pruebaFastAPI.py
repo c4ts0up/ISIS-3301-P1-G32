@@ -27,22 +27,36 @@ class ModelBuilder(BaseModel):
     pipeline_dump_name: str
     vectorizer_dump_name: str
     data_name: str
+    percent_train: float
+
+
+class ModelLoader(BaseModel):
+    pipeline_dump_name: str
+    vectorizer_dump_name: str
 
 
 @app.on_event("startup")
 async def startup_event():
-    global pipeline
-    # Your startup logic here
-    print("Aplicacion inicializada")
-    # Carga el pipeline
-    pipeline = svc_pipeline.load_pipeline(
-        'models/pipe_alpha_1.joblib',
-        'models/vecto_alpha_1.joblib'
+    await load_model(
+        ModelLoader(
+            pipeline_dump_name="pipe_3p_beta",
+            vectorizer_dump_name="vecto_3p_beta"
+        )
     )
+
+
+@app.post("/load-model")
+async def load_model(modelLoader: ModelLoader):
+    global pipeline
+    pipeline_path = 'models/' + modelLoader.pipeline_dump_name + '.joblib'
+    vectorizer_path = 'models/' + modelLoader.vectorizer_dump_name + '.joblib'
+
+    pipeline = svc_pipeline.load_pipeline(pipeline_path, vectorizer_path)
+
     if pipeline is not None:
-        print("Pipeline cargado correctamente")
+        print(modelLoader.pipeline_dump_name, "cargado correctamente")
     else:
-        print("Error de carga del pipeline")
+        print("ERROR: no se pudo cargar", modelLoader.pipeline_dump_name)
 
 
 @app.post("/model-builder")
@@ -60,7 +74,12 @@ async def build_model(modelBuilder: ModelBuilder):
     print("DATA: ", os.getcwd() + "/" + data_path)
 
     # Construye el pipeline
-    pipeline = svc_pipeline.build_pipeline(pipeline_dump_path, vectorizer_dump_path, data_path)
+    pipeline = svc_pipeline.build_pipeline(
+        pipeline_dump_path,
+        vectorizer_dump_path,
+        data_path,
+        percent_train=modelBuilder.percent_train
+    )
 
 
 @app.get("/health-check")
@@ -76,21 +95,34 @@ async def predict_test():
         print("No pipeline loaded")
         return {"error": "No pipeline loaded"}
     else:
-        p = pipeline.predict(pd.DataFrame({'Review': ['asqueroso']}))
+        df_entrada = pd.DataFrame({'Review': ['asqueroso']})
+        print(df_entrada)
+        df_respuesta = svc_pipeline.get_prediction(pipeline, df_entrada)
+
         # se debe convertir al tipo correcto
-        return {"pred": int(p[0]), "score": 50}
+        return {
+            "pred": int(df_respuesta.iloc[0]['Class']),
+            "score": float(df_respuesta.iloc[0]['Score'])
+        }
 
 
 @app.post("/a")
 async def read_root(resena: Resena):
+    print("Haciendo predicción")
     global pipeline
     if pipeline is None:
         print("No pipeline loaded")
         return {"error": "No pipeline loaded"}
     else:
-        p = pipeline.predict(pd.DataFrame({'Review': [resena.res]}))
+        df_entrada = pd.DataFrame({'Review': [resena.res]})
+        print(df_entrada)
+        df_respuesta = svc_pipeline.get_prediction(pipeline, df_entrada)
+
         # se debe convertir al tipo correcto
-        return {"pred": int(p[0]), "score": -1}
+        return {
+            "pred": int(df_respuesta.iloc[0]['Class']),
+            "score": float(df_respuesta.iloc[0]['Score'])
+        }
 
 
 @app.post("/b")
@@ -100,19 +132,17 @@ async def csvPred(file: UploadFile = File(...)):
     if pipeline is None:
         print("No pipeline loaded")
         # TODO: devolver mensaje de error
-        return {}
+        return {"error": "No pipeline loaded"}
 
     csv_content = await file.read()
     df = pd.read_csv(io.BytesIO(csv_content))
-    df1 = df.copy()
+
+    df_respuesta = svc_pipeline.get_prediction(pipeline, df)
+
     print(df.head(5))
     print(df.shape)
 
-    preds = pipeline.predict(df)
-    df1['Clasificacion'] = preds
-
-
-    processed_csv = df1.to_csv(index=False)
+    processed_csv = df_respuesta.to_csv(index=False)
 
     return StreamingResponse(io.BytesIO(processed_csv.encode()), media_type="text/csv",
                              headers={"Content-Disposition": "attachment; filename=processed_file.csv"})

@@ -5,6 +5,7 @@ import os
 import re
 from copy import deepcopy
 import nltk
+import numpy as np
 import pandas as pd
 import stanza
 import unicodedata
@@ -29,7 +30,7 @@ def build_pipeline(
             ('lemmatizer', Lemmatizer()),
             ('post-cleaner', PostCleaner(cleaning_func=clean_text)),
             ('vectorizer', Vectorizer()),
-            ('classifier', SVC(kernel='rbf', C=1))
+            ('classifier', SVC(kernel='rbf', C=1, probability=True))
         ]
     )
 
@@ -77,6 +78,28 @@ def load_pipeline(
     #pipeline['vectorizer'].vectorizer_algorithm = vectorizer
 
     return pipeline
+
+
+def get_prediction(pipeline: Pipeline, df):
+    # consigue las probabilidades
+    probabilidades = pipeline.predict_proba(df.copy())
+    # consigue el mapeo de clases
+    clases = pipeline['classifier'].classes_
+    # consigue el índice de mayor probabilidad para cada fila
+    indice_probable = [int(i) for i in np.argmax(probabilidades, axis=1)]
+    # mapea indices de mayor probabilidad con clases
+    clase_probable = [clases[i] for i in indice_probable]
+    # mapea probabilidades
+    score_clase = [probabilidades[i][indice_probable[i]] for i in range(len(probabilidades))]
+
+    df_respuesta = pd.DataFrame(columns=["Review", "Class", "Score"])
+    df_respuesta['Review'] = df['Review']
+    df_respuesta['Class'] = clase_probable
+    df_respuesta['Score'] = score_clase
+    df_respuesta['Class'] = df_respuesta['Class'].astype(int)
+    df_respuesta['Score'] = df_respuesta['Score'].astype(float)
+
+    return df_respuesta
 
 
 class Preprocesser(BaseEstimator, TransformerMixin):
