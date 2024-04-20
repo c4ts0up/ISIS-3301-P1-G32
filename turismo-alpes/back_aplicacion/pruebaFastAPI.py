@@ -1,11 +1,8 @@
 import os
-
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import random
-import time
 import pandas as pd
 import io
 from transforms import svc_pipeline
@@ -107,12 +104,15 @@ async def csvPred(file: UploadFile = File(...)):
 
     csv_content = await file.read()
     df = pd.read_csv(io.BytesIO(csv_content))
+    df1 = df.copy()
     print(df.head(5))
     print(df.shape)
 
     preds = pipeline.predict(df)
+    df1['Clasificacion'] = preds
 
-    processed_csv = preds.to_csv(index=False)
+
+    processed_csv = df1.to_csv(index=False)
 
     return StreamingResponse(io.BytesIO(processed_csv.encode()), media_type="text/csv",
                              headers={"Content-Disposition": "attachment; filename=processed_file.csv"})
