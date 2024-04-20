@@ -21,3 +21,9 @@ nltk                        # librería Natural Language Toolkit, usada para tra
 
 # Librerías en español
 stanza                      # tokenización y lematización
+
+# Librerías para aplicación
+fastapi
+pydantic
+uvicorn
+python-multipart
