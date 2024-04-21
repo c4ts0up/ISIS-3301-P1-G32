@@ -1,10 +1,29 @@
-fastapi
-uvicorn
-pydantic
+# Estándar para ML
 pandas
-nltk
-stanza
-joblib
-scikit-learn
-python-multipart
+# se eliminó pandas-profiling por incompatibilidad con ydata-profiling
 numpy
+joblib
+jupyter
+seaborn
+matplotlib
+scipy
+setuptools
+scikit-learn
+ydata-profiling             # ayuda en el entendimiento de datos
+openpyxl
+PyQt5
+
+# TODO: buscar librerías para el manejo en español
+inflect                     # maneja las flexiones gramaticales en inglés
+contractions                # maneja las contracciones en inglés
+scikit-plot                 # manejo de gráficas
+nltk                        # librería Natural Language Toolkit, usada para trabajar con textos
+
+# Librerías en español
+stanza                      # tokenización y lematización
+
+# Librerías para aplicación
+fastapi
+pydantic
+uvicorn
+python-multipart
